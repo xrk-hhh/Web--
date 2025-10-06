@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表单提交与结果展示</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        neutral: '#64748B',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .form-input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+            }
+            .transition-custom {
+                @apply transition-all duration-300 ease-in-out;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <!-- 页面标题 -->
+        <header class="text-center mb-10">
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-gray-800 mb-2">
+                <i class="fa fa-file-text-o text-primary mr-2"></i>表单提交演示
+            </h1>
+            <p class="text-neutral">填写表单并提交，查看结果展示</p>
+        </header>
+
+        <!-- 表单页面 -->
+        <section id="form-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8 transition-custom">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">请填写以下信息</h2>
+            
+            <form id="user-form" class="space-y-5">
+                <!-- 姓名输入 -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的姓名"
+                        autocomplete="name"
+                    >
+                </div>
+                
+                <!-- 邮箱输入 -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的邮箱"
+                        autocomplete="email"
+                    >
+                </div>
+                
+                <!-- 留言输入 -->
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">留言</label>
+                    <textarea 
+                        id="message" 
+                        name="message" 
+                        rows="4"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的留言（可选）"
+                    ></textarea>
+                </div>
+                
+                <!-- 兴趣爱好选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">兴趣爱好（可多选）</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-reading" 
+                                name="hobbies" 
+                                value="阅读"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-reading" class="ml-2 text-gray-700">阅读</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-sports" 
+                                name="hobbies" 
+                                value="运动"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-sports" class="ml-2 text-gray-700">运动</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-music" 
+                                name="hobbies" 
+                                value="音乐"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-music" class="ml-2 text-gray-700">音乐</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-travel" 
+                                name="hobbies" 
+                                value="旅行"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-travel" class="ml-2 text-gray-700">旅行</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 flex space-x-4">
+                    <!-- 重置按钮 -->
+                    <button 
+                        type="reset" 
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center"
+                    >
+                        <i class="fa fa-refresh mr-2"></i>重置表单
+                    </button>
+                    
+                    <!-- 提交按钮 -->
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center"
+                    >
+                        <i class="fa fa-paper-plane mr-2"></i>提交表单
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 完成页面 -->
+        <section id="result-section" class="hidden bg-white rounded-xl shadow-lg p-6 md:p-8 transition-custom">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-secondary mb-4">
+                    <i class="fa fa-check text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-semibold text-gray-800">提交成功！</h2>
+                <p class="text-neutral mt-1">以下是您提交的信息</p>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">姓名：</span>
+                    <span id="result-name" class="font-medium"></span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">邮箱：</span>
+                    <span id="result-email" class="font-medium"></span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-start">
+                    <span class="text-neutral w-full md:w-24 pt-1">留言：</span>
+                    <span id="result-message" class="font-medium">无留言</span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">兴趣爱好：</span>
+                    <span id="result-hobbies" class="font-medium"></span>
+                </div>
+            </div>
+            
+            <!-- 返回按钮 -->
+            <div class="mt-8">
+                <button 
+                    id="back-btn" 
+                    class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center"
+                >
+                    <i class="fa fa-arrow-left mr-2"></i>返回修改
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const formSection = document.getElementById('form-section');
+        const resultSection = document.getElementById('result-section');
+        const userForm = document.getElementById('user-form');
+        const backBtn = document.getElementById('back-btn');
+        
+        // 表单提交处理
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const formData = new FormData(this);
+            const formValues = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message') || '',
+                hobbies: Array.from(formData.getAll('hobbies'))
+            };
+            
+            // 保存数据到localStorage
+            localStorage.setItem('formSubmission', JSON.stringify(formValues));
+            
+            // 显示结果页面
+            showResultPage();
+        });
+        
+        // 返回按钮事件
+        backBtn.addEventListener('click', function() {
+            // 显示表单页面
+            formSection.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+            resultSection.classList.add('hidden', 'opacity-0', 'translate-y-4');
+            
+            // 重置表单（可选）
+            // userForm.reset();
+        });
+        
+        // 显示结果页面
+        function showResultPage() {
+            // 从localStorage获取数据
+            const savedData = JSON.parse(localStorage.getItem('formSubmission'));
+            
+            if (savedData) {
+                // 填充结果数据
+                document.getElementById('result-name').textContent = savedData.name;
+                document.getElementById('result-email').textContent = savedData.email;
+                document.getElementById('result-message').textContent = savedData.message || '无留言';
+                document.getElementById('result-hobbies').textContent = 
+                    savedData.hobbies.length > 0 ? savedData.hobbies.join('、') : '未选择';
+            }
+            
+            // 切换显示
+            formSection.classList.add('hidden', 'opacity-0', 'translate-y-4');
+            resultSection.classList.remove('hidden');
+            
+            // 添加动画效果
+            setTimeout(() => {
+                resultSection.classList.remove('opacity-0', 'translate-y-4');
+            }, 50);
+        }
+        
+        // 页面加载时检查是否有保存的数据
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加初始动画效果
+            formSection.classList.add('opacity-0', 'translate-y-4');
+            setTimeout(() => {
+                formSection.classList.remove('opacity-0', 'translate-y-4');
+            }, 100);
+        });
+    </script>
+</body>
+</html>

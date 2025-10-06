@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户信息表单</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',// 自定义主色调（蓝色，用于按钮、聚焦状态）
+                        secondary: '#10B981',// 辅助色（绿色，用于成功提示）
+                        neutral: '#64748B',// 中性色（用于次要文字、提示）
+                        male: '#3B82F6',// 男性性别标识色（蓝色）
+                        female: '#EC4899',// 女性性别标识色（粉色）
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'], // 自定义无衬线字体栈，保证跨设备可读性
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                /* 优化渲染性能：自动控制元素是否立即渲染 */
+                content-visibility: auto;
+            }
+            .form-input-focus {
+                 /* 输入框聚焦时的统一样式：蓝色边框+阴影、去除默认轮廓、输入框聚焦时轻微放大（1.01 倍） */
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none transform focus:scale-[1.01] transition-custom;
+            }
+            .transition-custom {
+                 /* 通用过渡动画：所有属性变化，300ms 缓动，让交互更丝滑 */
+                @apply transition-all duration-300 ease-in-out;
+            }
+        }
+    </style>
+</head>
+<!-- 页面背景从浅灰到稍深灰色渐变，替代单调的纯色。 -->
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans text-gray-800">
+    <!-- 角落装饰图形：左上角和右下角有半透明的圆形装饰，增加页面层次感，且完全不影响表单操作。 -->
+    <div class="fixed -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full"></div>
+    <div class="fixed -bottom-16 -right-16 w-64 h-64 bg-secondary/5 rounded-full"></div>
+
+    <!-- 添加relative和z-10确保内容在装饰上方(避免被遮挡) -->
+    <div class="container mx-auto px-4 py-8 max-w-3xl relative z-10"></div>
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+         <!-- 页面标题区：展示表单主题 + 引导文字 -->
+        <header class="text-center mb-10">
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-gray-800 mb-2">
+                <i class="fa fa-user-circle text-primary mr-2"></i>用户信息表单
+            </h1>
+            <p class="text-neutral">请填写以下信息，完成后提交查看结果</p>
+        </header>
+
+         <!-- 表单区：包含所有输入项，初始显示 -->
+        <section id="form-section" class="bg-white rounded-xl shadow-lg p-6 md:p-8 transition-custom">
+            
+            <h2 class="text-2xl font-semibold mb-6 pb-2 text-primary border-b border-blue-100">基本信息</h2>
+            <!-- 表单内容（姓名、性别、年龄、手机号码、邮箱、职业、兴趣爱好、留言、文件上传） -->
+            <form id="user-form" class="space-y-5">
+                <!-- 姓名输入 -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fa fa-user text-primary mr-1"></i>姓名 
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required
+                        autocomplete="name"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的姓名"
+                    >
+                </div>
+                
+                <!-- 性别选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">性别 
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center justify-center flex-1 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-custom relative">
+                            <input 
+                                type="radio" 
+                                name="gender" 
+                                value="男" 
+                                required
+                                class="sr-only peer"
+                            >
+                            <div class="flex flex-col items-center">
+                                <i class="fa fa-mars text-2xl text-male mb-2 peer-checked:text-male"></i>
+                                <span class="peer-checked:text-male font-medium">男</span>
+                            </div>
+                            <div class="absolute hidden peer-checked:block text-male">
+                                <i class="fa fa-check-circle"></i>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center justify-center flex-1 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-custom relative">
+                            <input 
+                                type="radio" 
+                                name="gender" 
+                                value="女" 
+                                class="sr-only peer"
+                            >
+                            <div class="flex flex-col items-center">
+                                <i class="fa fa-venus text-2xl text-female mb-2 peer-checked:text-female"></i>
+                                <span class="peer-checked:text-female font-medium">女</span>
+                            </div>
+                            <div class="absolute hidden peer-checked:block text-female">
+                                <i class="fa fa-check-circle"></i>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 年龄输入 -->
+                <div>
+                    <label for="age" class="block text-sm font-medium text-gray-700 mb-1">年龄 
+                        <span class="text-red-500">*</span></label>
+                    <input 
+                        type="number" 
+                        id="age" 
+                        name="age" 
+                        min="1" 
+                        max="120"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的年龄"
+                    >
+                </div>
+                
+                <!-- 手机号码 -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">手机号码 
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        required
+                        autocomplete="tel"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的手机号码"
+                    >
+                </div>
+                
+                <!-- 邮箱输入 -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fa fa-envelope text-primary mr-1"></i>邮箱
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        autocomplete="email"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请输入您的邮箱（可选）"
+                    >
+                </div>
+                
+                <!-- 职业选择 -->
+                <div>
+                    <label for="occupation" class="block text-sm font-medium text-gray-700 mb-1">职业</label>
+                    <select 
+                        id="occupation" 
+                        name="occupation"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus appearance-none bg-white"
+                    >
+                        <option value="">请选择您的职业（可选）</option>
+                        <option value="学生">学生</option>
+                        <option value="教师">教师</option>
+                        <option value="工程师">工程师</option>
+                        <option value="医生">医生</option>
+                        <option value="设计师">设计师</option>
+                        <option value="公务员">公务员</option>
+                        <option value="企业职员">企业职员</option>
+                        <option value="自由职业">自由职业</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                
+                <!-- 兴趣爱好选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">兴趣爱好（可多选）</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-reading" 
+                                name="hobbies" 
+                                value="阅读"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-reading" class="ml-2 text-gray-700">阅读</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-sports" 
+                                name="hobbies" 
+                                value="运动"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-sports" class="ml-2 text-gray-700">运动</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-music" 
+                                name="hobbies" 
+                                value="音乐"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-music" class="ml-2 text-gray-700">音乐</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-travel" 
+                                name="hobbies" 
+                                value="旅行"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-travel" class="ml-2 text-gray-700">旅行</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-gaming" 
+                                name="hobbies" 
+                                value="游戏"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-gaming" class="ml-2 text-gray-700">游戏</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 留言输入 -->
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">个人简介</label>
+                    <textarea 
+                        id="message" 
+                        name="message" 
+                        rows="4"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                        placeholder="请简单介绍一下自己（可选）"
+                    ></textarea>
+                </div>
+                
+                <!-- 文件上传区域 -->
+                <div>
+                    <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-3">上传头像（可选）</label>
+                    
+                    <!-- 上传区域 -->
+                    <div id="upload-container" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-custom cursor-pointer">
+                        <input 
+                            type="file" 
+                            id="file-upload" 
+                            name="file-upload" 
+                            accept="image/*"
+                            class="hidden"
+                        >
+                        
+                        <div id="upload-icon" class="mb-3">
+                            <i class="fa fa-cloud-upload text-4xl text-neutral"></i>
+                        </div>
+                        
+                        <div id="upload-text">
+                            <p class="text-gray-700 font-medium mb-1">点击或拖拽图片到此处上传</p>
+                            <p class="text-sm text-neutral">支持 JPG, PNG 等格式，最大 5MB</p>
+                        </div>
+                        
+                        <!-- 文件预览区域 -->
+                        <div id="file-preview" class="mt-4 hidden">
+                            <div class="bg-gray-50 p-3 rounded-lg flex items-center">
+                                <i id="file-icon" class="fa fa-file-image-o text-primary mr-3"></i>
+                                <div class="flex-1 text-left">
+                                    <p id="file-name" class="font-medium truncate"></p>
+                                    <p id="file-size" class="text-sm text-neutral"></p>
+                                </div>
+                                <button type="button" id="remove-file" class="text-neutral hover:text-red-500 transition-custom">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 提交和重置按钮 -->
+                <div class="pt-2 flex space-x-4">
+                    <!-- 重置按钮 -->
+                    <button 
+                        type="reset" 
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center"
+                    >
+                        <i class="fa fa-refresh mr-2"></i>重置表单
+                    </button>
+                    
+                    <!-- 提交按钮 -->
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center"
+                    >
+                        <i class="fa fa-paper-plane mr-2"></i>提交表单
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 完成页面 -->
+         <!-- 结果展示区：提交后显示，初始隐藏 -->
+        <section id="result-section" class="hidden bg-white rounded-xl shadow-lg p-6 md:p-8 transition-custom">
+            <!-- 提交结果 + 数据展示 -->
+            <div class="text-center mb-6">
+                <!-- 结果页成功图标 -->
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-secondary mb-4 animate-bounce">
+                    <i class="fa fa-check text-2xl"></i>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800">提交成功！</h2>
+                <p class="text-neutral mt-1">以下是您提交的信息</p>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">姓名：</span>
+                    <span id="result-name" class="font-medium"></span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">性别：</span>
+                    <span id="result-gender" class="font-medium flex items-center">
+                        <i id="gender-icon" class="mr-2"></i>
+                        <span id="gender-text"></span>
+                    </span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">年龄：</span>
+                    <span id="result-age" class="font-medium"></span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">手机号码：</span>
+                    <span id="result-phone" class="font-medium"></span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">邮箱：</span>
+                    <span id="result-email" class="font-medium">未填写</span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">职业：</span>
+                    <span id="result-occupation" class="font-medium">未选择</span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <span class="text-neutral w-full md:w-24">兴趣爱好：</span>
+                    <span id="result-hobbies" class="font-medium">未选择</span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-start">
+                    <span class="text-neutral w-full md:w-24 pt-1">个人简介：</span>
+                    <span id="result-message" class="font-medium">未填写</span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-start">
+                    <span class="text-neutral w-full md:w-24 pt-1">上传头像：</span>
+                    <div id="result-file" class="font-medium">
+                        <p>未上传</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 返回按钮 -->
+            <div class="mt-8">
+                <button 
+                    id="back-btn" 
+                    class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center"
+                >
+                    <i class="fa fa-arrow-left mr-2"></i>返回修改
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ---------- DOM 元素获取：缓存常用节点，避免重复查询 ----------
+        const formSection = document.getElementById('form-section');
+        const resultSection = document.getElementById('result-section');
+        const userForm = document.getElementById('user-form');
+        const backBtn = document.getElementById('back-btn');
+        const uploadContainer = document.getElementById('upload-container');
+        const fileInput = document.getElementById('file-upload');
+        const filePreview = document.getElementById('file-preview');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const fileIcon = document.getElementById('file-icon');
+        const removeFileBtn = document.getElementById('remove-file');
+        const uploadIcon = document.getElementById('upload-icon');
+        const uploadText = document.getElementById('upload-text');
+        
+        // ---------- 文件上传逻辑：点击/拖拽上传、格式/大小验证、预览 ----------
+        // 点击上传容器 → 触发文件选择框
+        uploadContainer.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // 文件选择后 → 调用 displayFileInfo 显示预览
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                displayFileInfo(e.target.files[0]);
+            }
+        });
+        
+        // 移除已选文件 → 清空输入+隐藏预览
+        removeFileBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            filePreview.classList.add('hidden');
+            uploadIcon.classList.remove('hidden');
+            uploadText.classList.remove('hidden');
+        });
+        
+        // 拖拽文件到区域 → 改变样式+处理文件
+        uploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.add('border-primary', 'bg-blue-50');// 拖拽中样式
+        });
+        
+        uploadContainer.addEventListener('dragleave', () => {
+            uploadContainer.classList.remove('border-primary', 'bg-blue-50');
+        });
+        
+        uploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.remove('border-primary', 'bg-blue-50');
+            
+            if (e.dataTransfer.files.length > 0) 
+            {
+                fileInput.files = e.dataTransfer.files;
+                displayFileInfo(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // 显示文件信息：验证格式（必须图片）、大小（≤5MB），更新预览 UI
+        function displayFileInfo(file) {
+            // 检查文件是否为图片
+            if (!file.type.startsWith('image/')) 
+            {
+                alert('请上传图片文件（JPG、PNG等）');
+                fileInput.value = '';
+                return;
+            }
+            
+            // 检查文件大小（5MB）
+            const maxSize = 5 * 1024 * 1024; // 5MB 字节数
+            if (file.size > maxSize) 
+            {
+                alert('文件大小不能超过5MB');
+                fileInput.value = '';
+                return;
+            }
+            
+            // 更新预览区域的文件名、大小、图标
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            
+            // 设置文件图标
+            fileIcon.className = 'fa fa-file-image-o text-primary mr-3';
+            
+            // 显示预览，隐藏上传提示
+            filePreview.classList.remove('hidden');
+            uploadIcon.classList.add('hidden');
+            uploadText.classList.add('hidden');
+        }
+        
+        // 格式化文件大小：字节 → KB/MB 等易读单位
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // ---------- 表单提交逻辑：收集数据 → 存 localStorage → 跳结果页 ----------
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 用 FormData 收集所有表单数据（包括文件）
+            const formData = new FormData(this);
+            const file = formData.get('file-upload');
+
+            // 整理数据为对象，方便 localStorage 存储（需转 JSON）
+            const formValues = {
+                name: formData.get('name'),
+                gender: formData.get('gender'),
+                age: formData.get('age'),
+                phone: formData.get('phone'),
+                email: formData.get('email') || '',// 空值设为 '' 避免 undefined
+                occupation: formData.get('occupation') || '',
+                message: formData.get('message') || '',
+                hobbies: Array.from(formData.getAll('hobbies')),// 多选框值转数组
+                file: file.name ? {
+                    // 有文件则存详细信息
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                } : null
+            };
+            
+            // 存储到 localStorage（永久存储，需转字符串）
+            localStorage.setItem('formSubmission', JSON.stringify(formValues));
+            //点击提交后，按钮显示旋转的加载图标和 “提交中” 文字，避免用户重复点击
+            const submitBtn = this.querySelector('button[type="submit"]');
+            // 保存原始按钮文本
+            const originalText = submitBtn.innerHTML;
+            // 显示加载动画，禁用按钮防止重复提交
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>提交中...';
+            // 模拟提交延迟 + 恢复按钮 + 跳转页面
+            setTimeout(() => {
+            // 恢复按钮状态
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            // 延迟结束后，再跳转结果页
+            showResultPage();
+            }, 500); // 800ms延迟，让用户感知“正在处理”
+        });
+        
+        // 表单重置时 → 额外隐藏文件预览（恢复初始上传提示）
+        userForm.addEventListener('reset', function() {
+            filePreview.classList.add('hidden');
+            uploadIcon.classList.remove('hidden');
+            uploadText.classList.remove('hidden');
+        });
+        
+        // ---------- 结果页逻辑：读取 localStorage → 渲染数据 + 页面切换 ----------
+        // 返回按钮 → 显示表单页，隐藏结果页
+        backBtn.addEventListener('click', function() {
+            // 显示表单页面
+            formSection.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+            resultSection.classList.add('hidden', 'opacity-0', 'translate-y-4');
+        });
+        
+       // 显示结果页：从 localStorage 取数据，填充到结果区
+        function showResultPage() {
+            // 从localStorage获取数据
+            const savedData = JSON.parse(localStorage.getItem('formSubmission'));// 取数据（转对象）
+            
+            if (savedData) 
+            {
+                // 填充姓名、性别、年龄等基础信息
+                document.getElementById('result-name').textContent = savedData.name;
+                
+                // 性别特殊处理（图标+文字）
+                const genderIcon = document.getElementById('gender-icon');
+                const genderText = document.getElementById('gender-text');
+                genderText.textContent = savedData.gender;
+                if (savedData.gender === '男') 
+                {
+                    genderIcon.className = 'fa fa-mars text-male mr-2';
+                }
+                else 
+                {
+                    genderIcon.className = 'fa fa-venus text-female mr-2';
+                }
+                
+                // 填充其他字段（邮箱、职业等，空值显示“未填写/未选择”）
+                document.getElementById('result-age').textContent = savedData.age;
+                document.getElementById('result-phone').textContent = savedData.phone;
+                document.getElementById('result-email').textContent = savedData.email || '未填写';
+                document.getElementById('result-occupation').textContent = savedData.occupation || '未选择';
+                document.getElementById('result-message').textContent = savedData.message || '未填写';
+                // 兴趣爱好用“、”连接显示
+                document.getElementById('result-hobbies').textContent = 
+                    savedData.hobbies.length > 0 ? savedData.hobbies.join('、') : '未选择';
+                
+                // 文件信息展示
+                const fileResult = document.getElementById('result-file');
+                if (savedData.file)
+                {
+                    fileResult.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fa fa-file-image-o text-primary mr-2"></i>
+                            <div>
+                                <p>${savedData.file.name}</p>
+                                <p class="text-sm text-neutral">${formatFileSize(savedData.file.size)}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                else 
+                {
+                    fileResult.innerHTML = '<p>未上传</p>';
+                }
+            }
+            
+            // 页面切换（隐藏表单，显示结果页，带淡入动画）
+            formSection.classList.add('hidden', 'opacity-0', 'translate-y-4');
+            resultSection.classList.remove('hidden');
+            
+            // 添加动画效果
+            setTimeout(() => {
+                resultSection.classList.remove('opacity-0', 'translate-y-4');
+            }, 50);
+        }
+        
+        // ---------- 页面初始化：表单区添加入场动画 ----------
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加初始动画效果
+            formSection.classList.add('opacity-0', 'translate-y-4');// 初始隐藏+下移
+            setTimeout(() => {
+                formSection.classList.remove('opacity-0', 'translate-y-4');// 动画显示
+            }, 100);
+        });
+    </script>
+</body>
+</html>
