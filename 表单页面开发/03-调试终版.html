@@ -264,6 +264,27 @@
                             >
                             <label for="hobby-gaming" class="ml-2 text-gray-700">游戏</label>
                         </div>
+                        
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="hobby-others" 
+                                name="hobbies" 
+                                value="其他"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            >
+                            <label for="hobby-others" class="ml-2 text-gray-700">其他</label>
+                        </div>
+                        <!-- 其他兴趣输入框（默认隐藏） -->
+                        <div id="other-hobby-container" class="ml-6 mt-1" style="display: none;">
+                            <input 
+                                type="text" 
+                                id="other-hobby" 
+                                name="otherHobby"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus"
+                                placeholder="请输入其他兴趣爱好"
+                            >
+                        </div>
                     </div>
                 </div>
                 
@@ -507,7 +528,27 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
-        
+        // ---------- 其他兴趣爱好显示/隐藏逻辑 ----------
+        const hobbyOthersCheckbox = document.getElementById('hobby-others');
+        const otherHobbyContainer = document.getElementById('other-hobby-container');
+        const otherHobbyInput = document.getElementById('other-hobby');
+
+        // 监听"其他"复选框状态，控制输入框显示
+        hobbyOthersCheckbox.addEventListener('change', function() {
+            if (this.checked) 
+            {
+                // 显示输入框
+                otherHobbyContainer.style.display = 'block';
+                otherHobbyInput.required = true; // 选中时设为必填
+            }
+             else 
+            {
+                // 隐藏输入框
+                otherHobbyContainer.style.display = 'none';
+                otherHobbyInput.required = false;
+                otherHobbyInput.value = ''; // 清空输入
+            }
+        });
         // ---------- 表单提交逻辑：收集数据 → 存 localStorage → 跳结果页 ----------
         userForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -542,7 +583,17 @@
                 email: formData.get('email') || '',// 空值设为 '' 避免 undefined
                 occupation: formData.get('occupation') || '',
                 message: formData.get('message') || '',
-                hobbies: Array.from(formData.getAll('hobbies')),// 多选框值转数组
+                hobbies: (() => {
+                    const hobbies = Array.from(formData.getAll('hobbies'));
+                    const otherHobby = document.getElementById('other-hobby').value.trim();
+                    // 如果勾选了"其他"且有内容，替换"其他"为具体值
+                    if (hobbies.includes('其他') && otherHobby) 
+                    {
+                        const index = hobbies.indexOf('其他');
+                        hobbies[index] = `其他：${otherHobby}`;
+                    }
+                    return hobbies;
+                })(),
                 file: file.name ? {
                     // 有文件则存详细信息
                     name: file.name,
@@ -567,7 +618,7 @@
             submitBtn.innerHTML = originalText;
             // 延迟结束后，再跳转结果页
             showResultPage();
-            }, 500); // 800ms延迟，让用户感知“正在处理”
+            }, 500); // 500ms延迟，让用户感知“正在处理”
         });
         // 表单验证，检查所有必填项
         function validateForm() {
@@ -606,6 +657,17 @@
             if (!phoneReg.test(phone)) 
             {
                 return { valid: false, message: '请填写有效的11位手机号码' };
+            }
+            
+            // 检查"其他"兴趣是否填写
+            const isOtherChecked = document.getElementById('hobby-others').checked;
+            if (isOtherChecked) 
+            {
+                const otherHobby = document.getElementById('other-hobby').value.trim();
+                if (!otherHobby) 
+                {
+                    return { valid: false, message: '请填写其他兴趣爱好的具体内容' };
+                }
             }
 
             // 所有验证通过
