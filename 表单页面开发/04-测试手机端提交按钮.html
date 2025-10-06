@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <button id="test-btn" style="width:200px;height:60px;font-size:20px;">
+        测试按钮
+    </button>
+    <script>
+        var btn = document.getElementById('test-btn');
+        btn.addEventListener('click', function() { alert('点击生效！'); });
+        btn.addEventListener('touchstart', function() { alert('触摸生效！'); });
+    </script>
+</body>
+</html>
